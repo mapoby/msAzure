@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NIE", "NIE", "{115BB1FB-601E-4A51-BF9D-036C9C906822}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CGL", "CGL", "{49385684-FBB5-4ADE-88A9-C3679D28E62D}"
+EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "cgl-mon-vms-deploy", "cgl-mon-vms-deploy\cgl-mon-vms-deploy.deployproj", "{07DE6C71-3B3A-4FA5-9F39-8AF07FB3B687}"
+EndProject
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "cgl-mon-vnet-vpngw-deploy", "cgl-mon-vnet-vpngw-deploy\cgl-mon-vnet-vpngw-deploy.deployproj", "{7DCB67A1-E1B7-45FC-9EFA-DE5B67B3A740}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07DE6C71-3B3A-4FA5-9F39-8AF07FB3B687}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07DE6C71-3B3A-4FA5-9F39-8AF07FB3B687}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07DE6C71-3B3A-4FA5-9F39-8AF07FB3B687}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07DE6C71-3B3A-4FA5-9F39-8AF07FB3B687}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DCB67A1-E1B7-45FC-9EFA-DE5B67B3A740}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DCB67A1-E1B7-45FC-9EFA-DE5B67B3A740}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DCB67A1-E1B7-45FC-9EFA-DE5B67B3A740}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DCB67A1-E1B7-45FC-9EFA-DE5B67B3A740}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{49385684-FBB5-4ADE-88A9-C3679D28E62D} = {115BB1FB-601E-4A51-BF9D-036C9C906822}
+		{07DE6C71-3B3A-4FA5-9F39-8AF07FB3B687} = {49385684-FBB5-4ADE-88A9-C3679D28E62D}
+		{7DCB67A1-E1B7-45FC-9EFA-DE5B67B3A740} = {49385684-FBB5-4ADE-88A9-C3679D28E62D}
+	EndGlobalSection
+EndGlobal

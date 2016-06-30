@@ -1,0 +1,202 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "MyStorageType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "MyVMName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "MyVMAdminUserName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "MyVMAdminPassword": {
+      "type": "securestring"
+    },
+    "MyVMWindowsOSVersion": {
+      "type": "string",
+      "defaultValue": "2012-R2-Datacenter",
+      "allowedValues": [
+        "2008-R2-SP1",
+        "2012-Datacenter",
+        "2012-R2-Datacenter",
+        "Windows-Server-Technical-Preview"
+      ]
+    },
+    "MyPublicIPDnsName": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "variables": {
+    "MyStorageName": "[concat('mystorage', uniqueString(resourceGroup().id))]",
+    "MyVNETPrefix": "10.0.0.0/16",
+    "MyVNETSubnet1Name": "Subnet-1",
+    "MyVNETSubnet1Prefix": "10.0.0.0/24",
+    "MyVNETSubnet2Name": "Subnet-2",
+    "MyVNETSubnet2Prefix": "10.0.1.0/24",
+    "MyVMImagePublisher": "MicrosoftWindowsServer",
+    "MyVMImageOffer": "WindowsServer",
+    "MyVMOSDiskName": "MyVMOSDisk",
+    "MyVMVmSize": "Standard_D1",
+    "MyVMVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'MyVNET')]",
+    "MyVMSubnetRef": "[concat(variables('MyVMVnetID'), '/subnets/', variables('MyVNETSubnet1Name'))]",
+    "MyVMStorageAccountContainerName": "vhds",
+    "MyVMNicName": "[concat(parameters('MyVMName'), 'NetworkInterface')]",
+    "MyPublicIPName": "MyPublicIP"
+  },
+  "resources": [
+    {
+      "name": "[variables('MyStorageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "MyStorage"
+      },
+      "properties": {
+        "accountType": "[parameters('MyStorageType')]"
+      }
+    },
+    {
+      "name": "MyVNET",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "MyVNET"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('MyVNETPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('MyVNETSubnet1Name')]",
+            "properties": {
+              "addressPrefix": "[variables('MyVNETSubnet1Prefix')]"
+            }
+          },
+          {
+            "name": "[variables('MyVNETSubnet2Name')]",
+            "properties": {
+              "addressPrefix": "[variables('MyVNETSubnet2Prefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('MyVMNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', 'MyVNET')]",
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('MyPublicIPName'))]"
+      ],
+      "tags": {
+        "displayName": "MyVMNic"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('MyVMSubnetRef')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('MyPublicIPName'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('MyVMName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('MyStorageName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('MyVMNicName'))]"
+      ],
+      "tags": {
+        "displayName": "MyVM"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('MyVMVmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('MyVMName')]",
+          "adminUsername": "[parameters('MyVMAdminUsername')]",
+          "adminPassword": "[parameters('MyVMAdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('MyVMImagePublisher')]",
+            "offer": "[variables('MyVMImageOffer')]",
+            "sku": "[parameters('MyVMWindowsOSVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "MyVMOSDisk",
+            "vhd": {
+              "uri": "[concat('http://', variables('MyStorageName'), '.blob.core.windows.net/', variables('MyVMStorageAccountContainerName'), '/', variables('MyVMOSDiskName'), '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('MyVMNicName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "[variables('MyPublicIPName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "MyPublicIP"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[parameters('MyPublicIPDnsName')]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "dnsName": {
+      "type": "string",
+      "value": "[reference(variables('MyPublicIPName')).dnsSettings.fqdn]"
+    }
+  }
+}
