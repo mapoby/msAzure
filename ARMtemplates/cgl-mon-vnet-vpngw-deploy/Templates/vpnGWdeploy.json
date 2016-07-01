@@ -43,34 +43,35 @@
     },
     "gatewaySubnetPrefix": {
       "type": "string",
-      "defaultValue": "10.10.1.0/29",
+      "defaultValue": "192.168.199.224/27",
       "metadata": {
         "description": "CIDR block for gateway subnet, subset of azureVNetAddressPrefix address space"
       }
     },
     "gatewayPublicIPName": {
       "type": "string",
-      "defaultValue": "VPNGatewayIP",
+      "defaultValue": "PublicIP",
       "metadata": {
         "description": "Aribtary name for public IP resource used for the new azure gateway"
       }
     },
     "gatewayName": {
       "type": "string",
-      "defaultValue": "VPNGateway01",
+      "defaultValue": "gw-cgl-vpn-vnet-prod-01",
       "metadata": {
         "description": "Arbitrary name for the new gateway"
       }
     },
     "connectionName": {
       "type": "string",
-      "defaultValue": "Site-To-Site",
+      "defaultValue": "con-cgl-2-site01",
       "metadata": {
         "description": "Arbitrary name for the new connection between Azure VNet and other network"
       }
     },
     "sharedKey": {
       "type": "securestring",
+      "defaultValue": "PSK1234567890",
       "metadata": {
         "description": "Shared key (PSK) for IPSec tunnel"
       }
