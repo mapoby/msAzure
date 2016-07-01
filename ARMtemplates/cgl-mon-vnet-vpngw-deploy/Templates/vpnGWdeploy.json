@@ -15,28 +15,28 @@
     },
     "virtualNetworkName": {
       "type": "string",
-      "defaultValue": "Vnet01",
+      "defaultValue": "vnet-cgl-prod-01",
       "metadata": {
         "description": "Arbitrary name for the Azure Virtual Network"
       }
     },
     "azureVNetAddressPrefix": {
       "type": "string",
-      "defaultValue": "10.10.0.0/16",
+      "defaultValue": "192.168.199.0/24",
       "metadata": {
         "description": "CIDR block representing the address space of the Azure VNet"
       }
     },
     "subnetName": {
       "type": "string",
-      "defaultValue": "Subnet01",
+      "defaultValue": "snet-vnet-cgl-prod-01-prod",
       "metadata": {
         "description": "Aribtrary name for the Azure Subnet"
       }
     },
     "subnetPrefix": {
       "type": "string",
-      "defaultValue": "10.10.2.0/24",
+      "defaultValue": "192.168.199.0/26",
       "metadata": {
         "description": "CIDR block for VM subnet, subset of azureVNetAddressPrefix address space"
       }

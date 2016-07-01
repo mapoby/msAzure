@@ -2,7 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "MyStorageType": {
+    "StorageType": {
       "type": "string",
       "defaultValue": "Standard_LRS",
       "allowedValues": [
@@ -13,18 +13,18 @@
         "Premium_LRS"
       ]
     },
-    "MyVMName": {
+    "VM01-Name": {
       "type": "string",
       "minLength": 1
     },
-    "MyVMAdminUserName": {
+    "VM01-AdminUserName": {
       "type": "string",
       "minLength": 1
     },
-    "MyVMAdminPassword": {
+    "VM01-AdminPassword": {
       "type": "securestring"
     },
-    "MyVMWindowsOSVersion": {
+    "VM01-WindowsOSVersion": {
       "type": "string",
       "defaultValue": "2012-R2-Datacenter",
       "allowedValues": [
@@ -34,84 +34,76 @@
         "Windows-Server-Technical-Preview"
       ]
     },
-    "MyPublicIPDnsName": {
+    "PublicIPDnsName": {
       "type": "string",
       "minLength": 1
     }
   },
   "variables": {
-    "MyStorageName": "[concat('mystorage', uniqueString(resourceGroup().id))]",
-    "MyVNETPrefix": "10.0.0.0/16",
-    "MyVNETSubnet1Name": "Subnet-1",
-    "MyVNETSubnet1Prefix": "10.0.0.0/24",
-    "MyVNETSubnet2Name": "Subnet-2",
-    "MyVNETSubnet2Prefix": "10.0.1.0/24",
-    "MyVMImagePublisher": "MicrosoftWindowsServer",
-    "MyVMImageOffer": "WindowsServer",
-    "MyVMOSDiskName": "MyVMOSDisk",
-    "MyVMVmSize": "Standard_D1",
-    "MyVMVnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'MyVNET')]",
-    "MyVMSubnetRef": "[concat(variables('MyVMVnetID'), '/subnets/', variables('MyVNETSubnet1Name'))]",
-    "MyVMStorageAccountContainerName": "vhds",
-    "MyVMNicName": "[concat(parameters('MyVMName'), 'NetworkInterface')]",
-    "MyPublicIPName": "MyPublicIP"
+    "StorageAccountName": "[concat('sacglmon', uniqueString(resourceGroup().id))]",
+    "VNETPrefix": "192.168.199.0/24",
+    "VNETSubnet1Name": "snet-vnet-cgl-prod-01-prod",
+    "VNETSubnet1Prefix": "192.168.199.0/26",
+    "VM01-ImagePublisher": "MicrosoftWindowsServer",
+    "VM01-ImageOffer": "WindowsServer",
+    "VM01-OSDiskName": "System",
+    "VM01-VmSize": "Standard_D1",
+    "VM01-VnetID": "[resourceId('Microsoft.Network/virtualNetworks', 'vnet-cgl-prod-01')]",
+    "VMSubnet1Ref": "[concat(variables('VM01-VnetID'), '/subnets/', variables('VNETSubnet1Name'))]",
+    "VMStorageAccountContainerName": "vhds",
+    "VM01-NicName": "[concat(parameters('VM01-Name'), 'NetworkInterface')]",
+    "PublicIPName": "PublicIP"
   },
   "resources": [
     {
-      "name": "[variables('MyStorageName')]",
+      "name": "[variables('StorageAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-06-15",
       "dependsOn": [ ],
       "tags": {
-        "displayName": "MyStorage"
+        "displayName": "Storage account for cgl-mon"
       },
       "properties": {
-        "accountType": "[parameters('MyStorageType')]"
+        "accountType": "[parameters('StorageType')]"
       }
     },
     {
-      "name": "MyVNET",
+      "name": "vnet-cgl-prod-01",
       "type": "Microsoft.Network/virtualNetworks",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-06-15",
       "dependsOn": [ ],
       "tags": {
-        "displayName": "MyVNET"
+        "displayName": "vnet-cgl-prod-01"
       },
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
-            "[variables('MyVNETPrefix')]"
+            "[variables('VNETPrefix')]"
           ]
         },
         "subnets": [
           {
-            "name": "[variables('MyVNETSubnet1Name')]",
+            "name": "[variables('VNETSubnet1Name')]",
             "properties": {
-              "addressPrefix": "[variables('MyVNETSubnet1Prefix')]"
+              "addressPrefix": "[variables('VNETSubnet1Prefix')]"
             }
           },
-          {
-            "name": "[variables('MyVNETSubnet2Name')]",
-            "properties": {
-              "addressPrefix": "[variables('MyVNETSubnet2Prefix')]"
-            }
-          }
         ]
       }
     },
     {
-      "name": "[variables('MyVMNicName')]",
+      "name": "[variables('VM01-NicName')]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-06-15",
       "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', 'MyVNET')]",
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('MyPublicIPName'))]"
+        "[concat('Microsoft.Network/virtualNetworks/', 'vnet-cgl-prod-01')]",
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('PublicIPName'))]"
       ],
       "tags": {
-        "displayName": "MyVMNic"
+        "displayName": "VMNic"
       },
       "properties": {
         "ipConfigurations": [
@@ -120,10 +112,10 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
-                "id": "[variables('MyVMSubnetRef')]"
+                "id": "[variables('VMSubnet1Ref')]"
               },
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('MyPublicIPName'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('PublicIPName'))]"
               }
             }
           }
@@ -131,37 +123,37 @@
       }
     },
     {
-      "name": "[parameters('MyVMName')]",
+      "name": "[parameters('VM01-Name')]",
       "type": "Microsoft.Compute/virtualMachines",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-06-15",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('MyStorageName'))]",
-        "[concat('Microsoft.Network/networkInterfaces/', variables('MyVMNicName'))]"
+        "[concat('Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('VM01-NicName'))]"
       ],
       "tags": {
-        "displayName": "MyVM"
+        "displayName": "cgl-mon project / Solar Winds App server"
       },
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[variables('MyVMVmSize')]"
+          "vmSize": "[variables('VM01-VmSize')]"
         },
         "osProfile": {
-          "computerName": "[parameters('MyVMName')]",
-          "adminUsername": "[parameters('MyVMAdminUsername')]",
-          "adminPassword": "[parameters('MyVMAdminPassword')]"
+          "computerName": "[parameters('VM01-Name')]",
+          "adminUsername": "[parameters('VM01-AdminUserName')]",
+          "adminPassword": "[parameters('VM01-AdminPassword')]"
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "[variables('MyVMImagePublisher')]",
-            "offer": "[variables('MyVMImageOffer')]",
-            "sku": "[parameters('MyVMWindowsOSVersion')]",
+            "publisher": "[variables('VM01-ImagePublisher')]",
+            "offer": "[variables('VM01-ImageOffer')]",
+            "sku": "[parameters('VM01-WindowsOSVersion')]",
             "version": "latest"
           },
           "osDisk": {
-            "name": "MyVMOSDisk",
+            "name": "VM01-OSDisk",
             "vhd": {
-              "uri": "[concat('http://', variables('MyStorageName'), '.blob.core.windows.net/', variables('MyVMStorageAccountContainerName'), '/', variables('MyVMOSDiskName'), '.vhd')]"
+              "uri": "[concat('http://', variables('StorageAccountName'), '.blob.core.windows.net/', variables('VMStorageAccountContainerName'), '/', variables('VM01-OSDiskName'), '.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -170,25 +162,25 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('MyVMNicName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('VM01-NicName'))]"
             }
           ]
         }
       }
     },
     {
-      "name": "[variables('MyPublicIPName')]",
+      "name": "[variables('PublicIPName')]",
       "type": "Microsoft.Network/publicIPAddresses",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-06-15",
       "dependsOn": [ ],
       "tags": {
-        "displayName": "MyPublicIP"
+        "displayName": "Public IP for cgl-mon project"
       },
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
-          "domainNameLabel": "[parameters('MyPublicIPDnsName')]"
+          "domainNameLabel": "[parameters('PublicIPDnsName')]"
         }
       }
     }
@@ -196,7 +188,7 @@
   "outputs": {
     "dnsName": {
       "type": "string",
-      "value": "[reference(variables('MyPublicIPName')).dnsSettings.fqdn]"
+      "value": "[reference(variables('PublicIPName')).dnsSettings.fqdn]"
     }
   }
 }

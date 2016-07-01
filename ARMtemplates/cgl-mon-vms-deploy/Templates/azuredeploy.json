@@ -40,7 +40,7 @@
     }
   },
   "variables": {
-    "StorageName": "[concat('sa-cgl-mon-', uniqueString(resourceGroup().id))]",
+    "StorageAccountName": "[concat('sacglmon', uniqueString(resourceGroup().id))]",
     "VNETPrefix": "192.168.199.0/24",
     "VNETSubnet1Name": "snet-vnet-cgl-prod-01-prod",
     "VNETSubnet1Prefix": "192.168.199.0/26",
@@ -56,7 +56,7 @@
   },
   "resources": [
     {
-      "name": "[variables('StorageName')]",
+      "name": "[variables('StorageAccountName')]",
       "type": "Microsoft.Storage/storageAccounts",
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-06-15",
@@ -128,11 +128,11 @@
       "location": "[resourceGroup().location]",
       "apiVersion": "2015-06-15",
       "dependsOn": [
-        "[concat('Microsoft.Storage/storageAccounts/', variables('StorageName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]",
         "[concat('Microsoft.Network/networkInterfaces/', variables('VM01-NicName'))]"
       ],
       "tags": {
-        "displayName": "vm-"
+        "displayName": "cgl-mon project / Solar Winds App server"
       },
       "properties": {
         "hardwareProfile": {
@@ -140,8 +140,8 @@
         },
         "osProfile": {
           "computerName": "[parameters('VM01-Name')]",
-          "adminUsername": "[parameters('VMAdminUserName')]",
-          "adminPassword": "[parameters('VMAdminPassword')]"
+          "adminUsername": "[parameters('VM01-AdminUserName')]",
+          "adminPassword": "[parameters('VM01-AdminPassword')]"
         },
         "storageProfile": {
           "imageReference": {
@@ -153,7 +153,7 @@
           "osDisk": {
             "name": "VM01-OSDisk",
             "vhd": {
-              "uri": "[concat('http://', variables('StorageName'), '.blob.core.windows.net/', variables('VMStorageAccountContainerName'), '/', variables('VM01-OSDiskName'), '.vhd')]"
+              "uri": "[concat('http://', variables('StorageAccountName'), '.blob.core.windows.net/', variables('VMStorageAccountContainerName'), '/', variables('VM01-OSDiskName'), '.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
