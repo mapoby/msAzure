@@ -2,19 +2,19 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "MyVMName": {
+        "VM01-Name": {
             "value": "vm-cgl-mon-01a"
         },
-        "MyVMAdminUserName": {
+        "VMAdminUserName": {
             "value": "admin"
         },
-        "MyPublicIPDnsName": {
+        "PublicIPDnsName": {
             "value": "vm-cgl-mon-01a"
         },
-        "MyStorageType": {
+        "StorageType": {
             "value": "Standard_LRS"
         },
-        "MyVMAdminPassword": {
+        "VMAdminPassword": {
             "reference": {
                 "keyVault": {
                     "id": "/subscriptions/20b43ee8-b97c-45d2-a30e-0961988a9bdc/resourceGroups/ARMBasics/providers/Microsoft.KeyVault/vaults/vlt-ARMBasics"
