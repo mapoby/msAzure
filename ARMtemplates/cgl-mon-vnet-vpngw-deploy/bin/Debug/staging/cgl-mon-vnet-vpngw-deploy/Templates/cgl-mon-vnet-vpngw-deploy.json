@@ -88,11 +88,11 @@
     "connectionName2": "[concat('conv-', parameters('newVnetName'))]",
     "gatewaySubnetRef1": "[concat(variables('vnetID1'),'/subnets/','GatewaySubnet')]",
     "gatewaySubnetRef2": "[concat(variables('vnetID2'),'/subnets/','GatewaySubnet')]",
-    "vnet-cgl-mon-prod-01Prefix": "192.169.199.0/24",
-    "vnet-cgl-mon-prod-01Subnet1Name": "snet-vnet-cgl-remote-01-prod",
-    "vnet-cgl-mon-prod-01Subnet1Prefix": "192.168.199.0/26",
-    "vnet-cgl-mon-prod-01Subnet2Name": "GatewaySubnet",
-    "vnet-cgl-mon-prod-01Subnet2Prefix": "192.168.199.224/27"
+    "vnet-cgl-mon-prod-Prefix": "192.168.199.0/24",
+    "vnet-cgl-mon-prod-Subnet1Name": "snet-vnet-cgl-prod-local-01",
+    "vnet-cgl-mon-prod-Subnet1Prefix": "192.168.199.0/26",
+    "vnet-cgl-mon-prod-Subnet2Name": "GatewaySubnet",
+    "vnet-cgl-mon-prod-Subnet2Prefix": "192.168.199.224/27"
   },
   "resources": [
     {
@@ -146,7 +146,8 @@
       "name": "[variables('gatewayName1')]",
       "location": "[parameters('existingVnetLocation')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('gatewayPublicIPName1'))]"
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('gatewayPublicIPName1'))]",
+        "[concat('Microsoft.Network/virtualNetworks/', parameters('existingVnetName'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -241,36 +242,36 @@
         "sharedKey": "[parameters('sharedKey')]"
       }
     },
-      {
-          "name": "vnet-cgl-mon-prod-01",
-          "type": "Microsoft.Network/virtualNetworks",
-          "location": "[resourceGroup().location]",
-          "apiVersion": "2015-06-15",
-          "dependsOn": [ ],
-          "tags": {
-              "displayName": "vnet-cgl-mon-prod-01"
+    {
+      "name": "[parameters('existingVnetName')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "vnet-cgl-mon-prod"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('vnet-cgl-mon-prod-Prefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('vnet-cgl-mon-prod-Subnet1Name')]",
+            "properties": {
+              "addressPrefix": "[variables('vnet-cgl-mon-prod-Subnet1Prefix')]"
+            }
           },
-          "properties": {
-              "addressSpace": {
-                  "addressPrefixes": [
-                      "[variables('vnet-cgl-mon-prod-01Prefix')]"
-                  ]
-              },
-              "subnets": [
-                  {
-                      "name": "[variables('vnet-cgl-mon-prod-01Subnet1Name')]",
-                      "properties": {
-                          "addressPrefix": "[variables('vnet-cgl-mon-prod-01Subnet1Prefix')]"
-                      }
-                  },
-                  {
-                      "name": "[variables('vnet-cgl-mon-prod-01Subnet2Name')]",
-                      "properties": {
-                          "addressPrefix": "[variables('vnet-cgl-mon-prod-01Subnet2Prefix')]"
-                      }
-                  }
-              ]
+          {
+            "name": "[variables('vnet-cgl-mon-prod-Subnet2Name')]",
+            "properties": {
+              "addressPrefix": "[variables('vnet-cgl-mon-prod-Subnet2Prefix')]"
+            }
           }
+        ]
       }
+    }
   ]
 }

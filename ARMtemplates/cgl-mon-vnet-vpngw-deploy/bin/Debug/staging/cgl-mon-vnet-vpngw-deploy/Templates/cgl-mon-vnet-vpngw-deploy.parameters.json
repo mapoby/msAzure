@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "existingVnetName": {
-      "value": "vnet-cgl-prod-01"
+      "value": "vnet-cgl-prod-local"
     },
     "existingVnetLocation": {
       "value": "North Europe"
@@ -15,7 +15,7 @@
       "value": "192.168.99.0/24"
     },
     "newVnetSubnetName": {
-      "value": "snet-vnet-cgl-remote-01-prod"
+      "value": "snet-vnet-cgl-prod-remote-01"
     },
     "newVnetSubnetPrefix": {
       "value": "192.168.99.0/26"
