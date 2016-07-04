@@ -89,7 +89,7 @@
     "gatewaySubnetRef1": "[concat(variables('vnetID1'),'/subnets/','GatewaySubnet')]",
     "gatewaySubnetRef2": "[concat(variables('vnetID2'),'/subnets/','GatewaySubnet')]",
     "vnet-cgl-mon-prod-01Prefix": "192.169.199.0/24",
-    "vnet-cgl-mon-prod-01Subnet1Name": "snet-vnet-cgl-prod-local-01",
+    "vnet-cgl-mon-prod-01Subnet1Name": "snet-vnet-cgl-remote-01-prod",
     "vnet-cgl-mon-prod-01Subnet1Prefix": "192.168.199.0/26",
     "vnet-cgl-mon-prod-01Subnet2Name": "GatewaySubnet",
     "vnet-cgl-mon-prod-01Subnet2Prefix": "192.168.199.224/27"
