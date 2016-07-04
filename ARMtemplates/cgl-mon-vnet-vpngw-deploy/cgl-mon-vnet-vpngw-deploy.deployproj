@@ -32,8 +32,8 @@
       <Visible>False</Visible>
     </None>
     <Content Include="Scripts\Deploy-AzureResourceGroup.ps1" />
-    <Content Include="Templates\vpnGWdeploy.json" />
-    <Content Include="Templates\vpnGWdeploy.parameters.json" />
+    <Content Include="Templates\cgl-mon-vnet-vpngw-deploy.json" />
+    <Content Include="Templates\cgl-mon-vnet-vpngw-deploy.parameters.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
 </Project>
